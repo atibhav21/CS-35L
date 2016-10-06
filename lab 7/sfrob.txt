@@ -1,0 +1,103 @@
+I used the command head --bytes=num /dev/urandom > num.txt
+to get a file of num bytes to do the comparisons.
+
+File Size: 10000 bytes
+Number of Words: 45
+Comparisons: 191
+
+File Size: 100000 bytes
+Number of Words: 418
+Comparisons: 3127
+
+File Size: 1000000 bytes
+Number of Words: 3828
+Comparisons: 40794
+
+File Size: 10000000 bytes
+Number of Words: 39218
+Comparisons: 549949
+
+I plugged these values in a regression tool and got a graph which is similar to y = xlogx. This is the efficiency of the quicksort algorithm.
+
+Comparison between sfrobu and sfrob
+
+File Size: 100 bytes
+Number of Words: 2
+
+sfrob
+real	0m0.012s
+user	0m0.000s
+sys		0m0.001s
+
+sfrobu
+real	0m0.002s
+user	0m0.001s
+sys		0m0.000s
+
+File Size: 1000 bytes
+Number of Words: 6
+
+sfrob:
+real	0m0.002s
+user	0m0.001s
+sys		0m0.001s
+
+sfrobu:
+real	0m0.004s
+user	0m0.000s
+sys		0m0.002s
+
+File Size: 10000 bytes
+Number of Words: 45
+
+sfrob:
+real	0m0.006s
+user	0m0.002s
+sys		0m0.001s
+
+sfrobu: 
+real	0m0.017s
+user	0m0.003s
+sys		0m0.013s
+
+File Size: 100000 bytes
+Number of Words: 418
+
+sfrob:
+real	0m0.011s
+user	0m0.004s
+sys		0m0.002s
+
+sfrobu: 
+real	0m0.122s
+user	0m0.007s
+sys		0m0.104s
+
+File Size: 1000000 bytes
+Number of Words: 3828
+
+sfrob:
+real	0m0.073s
+user	0m0.031s
+sys		0m0.002s
+
+sfrobu:
+real	0m1.078s
+user	0m0.062s
+sys		0m0.996s
+
+File Size: 10000000 bytes
+Number of Words: 39218
+
+sfrob:
+real	0m0.550s
+user	0m0.291s
+sys		0m0.015s
+
+sfrobu:
+real	0m10.990s
+user	0m0.588s
+sys		0m10.198s
+
+As we can observe from this data, as the number of words increases, the time used by sfrob is less than sfrobu. sfrob.c uses buffered input whereas sfrobu.c uses unbuffered input. 
+Hence, System calls take longer than buffered output.

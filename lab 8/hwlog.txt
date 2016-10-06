@@ -1,0 +1,35 @@
+scp srt.tgz atibhav@lnxsrv.seas.ucla.edu:~/35L/lab8
+to copy the .tgz file to the SEASNet server
+
+tar -xvzf srt.tgz
+To extract the contents of srt.tgz
+
+gimp baseline.ppm 
+To view the image before making a change
+
+After modifying main.c
+
+ran
+make clean check > make-log.txt
+
+real	0m48.237s
+user	0m48.241s
+sys		0m0.001s
+
+real	0m48.549s
+user	1m36.869s
+sys		0m0.003s
+
+real	0m48.460s
+user	3m13.307s
+sys		0m0.007s
+
+real	0m50.957s
+user	6m46.356s
+sys		0m0.008s
+
+To check that 1-test.ppm and baseline.ppm were identical, I ran the command
+diff -u baseline.ppm 1-test.ppm > diffImage.txt
+
+diffImage.txt was an empty file as we wanted.
+

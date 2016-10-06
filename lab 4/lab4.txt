@@ -1,0 +1,97 @@
+1.  mkdir gitroot
+	cd gitroot
+	git clone git://git.savannah.gnu.org/diffutils.git
+
+	I ran these commands to make a directory, and initialize an already 
+	existing github repository into this folder
+
+2. 	cd diffutils
+	git log >git-log.txt
+
+	The command git-log according to the man page produced the entire log for
+	the repository. 
+
+3.	git tag >git-tags.txt
+	I ran this command to generate a list of tags for this repository
+
+4. 	emacs git-log.txt
+	C-s maint: quote and copied the hash value
+	git show 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f > quote-patch.txt
+
+	The git show command searches for a commit based on its hash value. I 
+	found the hash value of the required commit by searching through the file
+	 using emacs' incremental search. Then I copied the value and used it 
+	 with git show
+
+5. 	git checkout v3.0 -b diffUtilsBranch
+	I ran this command to generate a new branch at the v3.0 commit so that 
+	I could modify code according to the lab.
+
+6. 	patch -p1 <quote-patch.txt
+	I ran the patch command to apply the patch produced by the previous file.
+	 I used the -p1 option since the patch file should ignore all data before
+	 the first slash. for example, instead of searching for a/src/diff.c, it
+	 should just search for src/diff.c
+
+7. 	git status
+	This command outputted a bunch of files like (NEWS, README, 
+	src/analyze.c etc) that were modified by the patch command and also 
+	outputted files like (src/cmp.c.orig,	src/context.c.orig) that were 
+	created by the patch
+
+8.and 9. emacs NEWS
+	C-x v u to revert all the changes in the 
+	NEWS, README, TODO, doc/diagmeet.note, ms/config.bat, ms/config.site, 
+	po/en.po, src/diff.h, src/system.h, tests/help-version . Since all the 
+	changes in these had to be reverted according to the lab specifications
+	emacs src/analyze.c
+	C-x v = to visit the vc-diff buffer
+	C-u C-c C-a to undo hunks which are not part of string literals.
+	Did the same to src/analyze.c, src/cmp.c, src/context.c, src/diff.c, 
+	src/diff3.c, src/dir.c, src/ifdef.c, src/io.c, src/sdiff.c, src/side.c, 
+	src/util.c 
+	Used M-n and M-p to move through hunks
+
+10.
+Used emacs src/*.c.rej and then C-c C-c to visit the destination and had to
+ manually change the ` in string literals to ‘. Repeated this for diff.c.rej 
+ and diff3.c.rej
+
+11. Used git clean -n to see a list of files that would be deleted by 
+git clean
+Used git clean -f to delete all the untracked files. I used the -n option to
+first do a dry run of the deletion, to see a list of what files would be 
+deleted by the actual command. I added the -f option to forcefully remove the
+files, in case they produced any prompts
+
+12. git status (Outputs 6 modified .c files)
+    git diff >quote-3.0-patch.txt 
+I ran this command to see the modified files and to get the difference 
+between the modified .c files and the original c files, which is then stored
+in the patch.
+
+13. Running on lnxsrv02
+./bootstrap
+./configure
+make
+make check
+I ran these commands based on the README-hacking file to install the modified
+version of diffutils
+
+14. cd ..
+  	cp ./diffutils/src/*.c diffutils-3.0-patch
+
+  	mkdir diffutils-3.0
+  	git checkout master
+  	git checkout v3.0 -b mbranch
+  	cd back to gitroot
+  	cp diffutils/src/*.c diffutils-3.0
+
+  	I first copied the modified .c files into the diffutils-3.0-patch folder.
+  	 Then I switched my branch to master to get an unmodified version of the
+  	 source code. I compared these two files using the 
+ diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch> quote-3.0-test.txt
+
+15. The files are not identical. They only differences in the two files lies
+in the ` being replaced by the ‘ character in string literals.
+These differences are trivial.

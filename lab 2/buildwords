@@ -1,0 +1,16 @@
+#! /bin/bash
+
+sed -e 's/ .<td><br>\n.*<\/td>//g'|
+sed -e 's/<td><\/td>//g' |
+grep '<td>.*</td>' | 
+sed 's/<[^>]*>//g' | 
+tr -d '[:blank:]' |
+tr -d '\r' |
+tr '`' "'"|
+sed '1d; n; d' | #delete alternate words
+#sed "s/^[^p\'mnwlhaeiou]*$//g"| #Delete english words
+tr ',' '\n' | #change commas to newline character since its a new word 
+tr [:upper:] [:lower:] |
+sort -u |
+tr -cd "['pkmnwlhaeiou\n]"
+

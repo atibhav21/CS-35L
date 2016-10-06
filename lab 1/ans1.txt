@@ -1,0 +1,80 @@
+1. man -K define I used the man man hint given on the webpage to find the -K
+	 which lets us search for a string in all the commands
+
+2.
+	whereis cp 
+	whereis wc
+	whereis command was given in the slides so it was easy running these 
+	commands. I chose where is because the question is worded exactly like 
+	“Where are the cp and wc programs located”
+
+3. find /usr/bin -type f -name ?.exe
+	I searched in /usr/bin because that is what we were told in class. I used 
+	-type f since we are looking for a file. I used -name ?.exe because an 
+	executable with just one character would be name something like “a.exe” or 
+	“b.exe” etc. Hence the ? does the job here.
+
+4. 	etc/alternatives/emacs
+	I used readlink /usr/bin/emacs for this problem since we have to read 
+	where the symbolic link /usr/bin/emacs points to. 
+
+5. 	g+s: set group ID on execution  o-x: remove permission of others to 
+	execute the file This was Covered in the slides in my lab section and 
+	was pretty straight-forward.
+
+6. 	-mtime
+	I used man find to find a suitable option which helps us find all the 
+	files modified in the past n days
+
+7. 	find . -mtime -21
+ 	I struggled with this problem since I was using -mtime 21 instead of 
+ 	-mtime -21. However, after seeing a couple of examples I realized what I 
+ 	was doing wrong. 
+
+8. 	find /usr/bin -type l
+	I found the -type l option in the man page of find. I search in the 
+	/usr/bin directory because that is where the find command is.
+	Output produced: (condensed)
+	/usr/bin/hp-query 
+	/usr/bin/rmail
+	/usr/bin/scrollkeeper-config
+
+9.	find -type f | sort | head -n 1
+	I found the sort option after some help from my TA Josh. I found the -n 1 
+	by reading the man page of find. What -n 1 does is it only prints the 
+	first output line produced from the command. 
+	Output: ./acroread/bin/acroread
+
+10. locale writes information about the argument passed to it. IF no argument 
+	is passed to locale, then it summarizes the current environment defined by
+	the LC_* environment variables
+
+11. sort-columns, sort-fields, sort-lines, sort-numeric-fields, sort-pages, 
+	sort-paragraphs, sort-regexp-fields
+	I found this by typing M-x sort Enter Enter. This showed the possible 
+	completions for the M-x sort- command, which lead to this answer. 
+12. C-M
+	C-M-a: move the cursor One function backward
+	C-M-b: move the cursor one expression backward
+	C-M-c: exit a recursive edit
+	C-M-d: no command
+	C-M-e: move the cursor one function forward
+	C-M-f: move the cursor one expression forward
+	C-M-g: no command
+	C-M-h: mark a function
+
+13.	C-g stops a command that is taking too long to execute. It can also be 
+	used to remove the numeric argument of a command or remove the Escape 
+	Key (ESC) 		from the command buffer. 
+
+14. Yank function is used to paste any text that has been either killed (cut)
+	before or has been copied before
+
+15. When I did this it generated around ~5000 lines. What I did was I changed 
+my directory to /usr/bin. Then I executed the command ls -l >~/Desktop/lsl.txt
+This created a file on the desktop with the result of the command. Then I went 
+into emacs and created a new buffer on the desktop and copied the result from
+tired command using C-x o (to switch buffers) C-x h (to Select all the lines) 
+M-w (to copy the lines) and C-y (to paste the lines). After executing all these 
+commands I executed diff -u lsl.txt emacdired.txt >result.diff. This result.diff
+had around 5000 lines of difference. 

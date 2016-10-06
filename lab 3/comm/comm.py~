@@ -1,0 +1,103 @@
+#!/usr/bin/python
+"""
+	Copyright Atibhav Mittal 2016
+
+"""
+
+import random, sys
+from optparse import OptionParser
+
+def compareUnsorted(arr1, arr2, options):
+    #arr1 = file1.getLines()
+    #arr2 = file2.getLines()
+    i = 0
+    j = 0
+    while(i < len(arr1) ):
+        while(j < len(arr2)):
+            if(arr2[j] == arr1[i] and options.supress3 == false):
+                print ("\t\t" + str(arr1[i] ) ),
+                i += 1
+        		#delete element j from arr2
+                del arr2[j]
+                j = 0
+                break
+            else:
+            	j += 1
+        if(j >= len(arr2) and options.supress1 == false):  #unique to file 1
+            print(str(arr1[i])),
+            i += 1
+            j = 0
+    j = 0
+    if(options.supress2 == false):
+        while(j < len(arr2)):
+            print ("\t" + (str(arr2[j]))),
+            j += 1
+      
+
+
+#Prints out comm utility for sorted files
+def compareFiles(arr1, arr2, options):  
+	i = 0
+	j = 0
+	while i < len(arr1) and j < len(arr2): 
+		if (arr1[i] == arr2[j] and options.supress3 == false):
+			print ("\t\t" + str(arr1[i] ) ),
+			i += 1
+			j += 1
+		elif (arr1[i] < arr2[j] and options.supress1 == false):
+			print (str(arr1[i])),
+			i += 1
+		elif (options.supress2 == false):
+			print ("\t" + (str(arr2[j]))),
+			j += 1
+	if ( i < len (arr1) and options.supress1 == false):
+		while i < len(arr1) :
+			print (str(arr1[i])),
+			i += 1
+	elif (j < len (arr2) and options.supress2 == false):
+		while j < len(arr2) :
+			print ("\t" + str(arr2[j])),
+			j += 1
+
+def main():
+    version_msg = "%prog 1.0"
+    usage_msg = "usage: %prog [options] file1 file2"
+    parser = OptionParser(version=version_msg,
+                          usage=usage_msg)
+    parser.add_option("-u", "--unsorted", 
+                     action="store_true", dest="m_unsorted",
+                     help="Used for unsorted file input")
+    parser.add_option("-1", action="store_true", dest="supress1")
+    parser.add_option("-2", action="store_true", dest="supress2")
+    parser.add_option("-3", action="store_true", dest="supress3")
+    options, args = parser.parse_args(sys.argv[1:])
+    try:    
+        first_file = args[0]
+        second_file = args[1]
+        if(first_file == '-' and second_file == '-'):
+            raise Exception
+        if(first_file == '-'):
+            for line in sys.stdin:
+                arr1.append(line)
+        else:
+            f = open(first_file, 'r')
+            arr1 = f.readlines()
+            f.close()
+
+        if(second_file == '-'):
+            for line in sys.stdin:
+                arr2.append(line)
+        else:
+            f = open(second_file, 'r')
+            arr2 = f.readlines()
+            f.close()
+
+        if(options.m_unsorted):
+            compareUnsorted(arr1, arr2, options)
+        else:
+            compareFiles(arr1, arr2, options)
+    except:
+	    print("usage: comm [-123u] file1 file2"),
+	    
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,93 @@
+1. 
+I executed this command to get the tarball file for coreutils. 
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+
+2. 
+I then ran the command tar -xvzf coreutils-7.6.tar.gz to extract
+the files from the tarball format which created a new directory with all the
+ files including the configuration scripts.
+I then ran the command mkdir coreutilsInstall to make a new directory to 
+install the coreutils. I went into the coreutils-7.6 directory. To configure 
+this, i ran the command
+ ./configure --prefix=/u/cs/ugrad/atibhav/coreutilsInstall to install the 
+utilities. A problem that I faced was I used the path name starting with ~. 
+However the prefix command requires the absolute path, so I had to insert the 
+root directory (/) at the beginning to install the utilities and replace ~ 
+with the full path name I ran the command 
+make
+to compile all the files. And then the command
+make install 
+to install all these utilities
+
+3.
+cd coreutils-7.6
+I then went into the src directory. I then ran the command
+./ls -l 
+to reproduce the bug
+
+4.
+cd coreutils-7.6
+emacs patch_file
+Now to replace the ls command, I went into the coreutils-7.6 directory and
+generated a new file named "patch_file". I then copied and pasted the result
+from the online Brady's patch into this file. I saved and closed the file and
+the next step was to patch the source code.
+
+patch -p1 < patch_file
+I ran the command to patch the ls.c file. The patch command takes the input 
+from a diff file and replaces the content in the actual file as specified in 
+the patch file. I used the option -p1 to ignore anything upto the first '/' in
+the paths since the directory the creator of the file is different than my 
+path. However, the relative path after the first slash is the same. 
+Hence I used -p1 to ignore everything upto the first slash.
+
+5. 
+I then went back into the coreutils-7.6/src directory and typed make to 
+rebuild the changed files. The output generated the following lines:
+CC ls.o - this was generated since the ls.c file was modified
+CCLD   dir 
+CCLD   vdir
+CCLD   ls - this was also generated because the ls file was modified
+
+To run the old buggy executable I just ran the command c
+oreutilsInstall/bin/ls -l
+However, to run the new version, I ran the command(from my home directory), 
+coreutils-7.6/src/ls -l 
+This produced the output in the Unix format as required by the patch
+
+After running buggy version of ls:
+drwx------  3 atibhav csugrad     4096 2016-04-11 10:16 35L Lab 2
+
+After running patched version of ls:
+drwx------  3 atibhav csugrad     4096 Apr 11 10:16 35L Lab 2
+
+6. Testing:
+
+I created a new file file.txt in my home directory and used the touch 
+command to change the modified time of this file. The command that I used was
+touch -t 201308211010 file.txt
+which set the time to August 21st 2013 at 10:10 pm
+
+I ran the command on a file that was modified over a year ago and the 
+new patched version does not display the time for that file in the ls command
+
+Modified Over a year ago
+Patched Version 
+Command I ran: coreutils-7.6/src/ls -l file.txt
+Ouput I got: -rw-r--r-- 1 atibhav csugrad 8668 Aug 21  2013 file.txt
+
+Old Version 
+Command I ran: coreutilsInstall/bin/ls -l file.txt
+Output I got: -rw-r--r-- 1 atibhav csugrad 8668 2013-08-21 10:10 file.txt
+
+As we can see, the patched version does not display the time of files which 
+were modified over a year ago.
+
+Recently Modified File
+Patched Version
+Command I ran: coreutilsInstall/bin/ls -l comm.py
+Output I got: -rwxr-xr-x 1 atibhav csugrad 3679 2016-04-16 12:26 comm.py
+
+Old Version
+Command I ran: coreutils-7.6/src/ls -l comm.py
+Outut I got: -rwxr-xr-x 1 atibhav csugrad 3679 Apr 16 12:26 comm.py

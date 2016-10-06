@@ -1,0 +1,41 @@
+1 & 2. git checkout master 
+git checkout v3.0 -b quote
+I ran this command to make a new unmodified branch.
+
+3. patch -p1 <quote-3.0-patch.txt
+I ran this command to apply the patch file to this unmodified code to make it
+work properly. I used the -p1 option to ignore everything before the first 
+slash in the patch file, since the src folders in the patch and this folder 
+are the same.
+
+4. & 5.  emacs src/diff.c
+	C-x 4 a
+	Entered my ChangeLog in the form 
+	*<filename>: Changes made
+
+6. git add .
+	git commit -F ChangeLog
+	I ran this command to commit my changes. I used the -F option to get 
+	the commit message from the ChangeLog file that I created in the previous
+	step.
+
+7. git format-patch -1 --stdout >formatted-patch.txt
+	I ran this command to create a formatted patch for the code. 
+
+8. Partners Name: Devin Liu
+	git checkout master
+	git checkout v3.0 -b partner
+	When I tried to apply this patch, I got an error, which said:
+	Applying: Changelog
+	fatal: corrupt patch at line 74
+	Patch failed at 0001 Changelog
+	The copy of the patch that failed is found in:
+   		/u/cs/ugrad/atibhav/gitroot/diffutils/.git/rebase-apply/patch
+	When you have resolved this problem, run "git am --continue".
+	If you prefer to skip this patch, run "git am --skip" instead.
+	To restore the original branch and stop patching, run "git am --abort".
+	
+9.  make dstdir
+	emacs diffutils*/ChangeLog
+	My patch was added to the file at the top with my commit message. 
+

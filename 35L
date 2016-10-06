@@ -1,0 +1,149 @@
+No Textbook
+Online material will be referred to extensively
+
+Class: web.cs.ucla.edu/classes/spring16/cs35L/
+CCLE: ccle.ucla.edu/my/
+TA: http://j.mp/CS35LS16
+
+jshvn@ucla.edu
+
+First Assignment Due this Friday
+
+Host: lnxsrv.seas.ucla.edu
+User: SEAS ID
+Password: SEAS password
+
+GNU/Linux
+- Open Source Operating System
+	- Kernel: core of operating system
+		- communication between software and hardware
+		- allocates time and memory to programs
+	- Shell: Interface between the user and the kernel
+		- command line interface
+	- Programs
+
+Ubuntu and Red Hat
+
+Use SEAS Server - best option
+
+Interacting with Computers: History
+
+1. Switches and Lights
+2. Batch Processing
+3. Teletype - CLI (Command Line Interface)
+4. GUI
+
+Everything is either a process or a file:
+
+Process: an executing program identified by PID
+File: collection of data
+	A document
+	Text of program written in high level language
+	Executable
+	Directory
+	Devices
+
+Linux File System Layout
+Tree structured hierarchy
+Root (/)
+	
+Absolute Path always has the '/' at the beginning
+Relative Path does not have the root character at the beginning
+
+pwd: Print working directory
+cd: Change directory
+	~ Home Directory
+	. current Directory
+	/ root directory or directory separator
+	.. parent directory
+
+Dealing with files
+	mv: move/rename a file
+	cp: copy a file
+	rm remove a file
+	 	-r remove directories and their contents recursively
+	mkdir make a directory
+	rmdir remove an empty directory
+	ls: list contents of a directory
+		-d: list only directories
+		-a: list all files including hidden ones
+		-l: show long listing including permission info
+		-s: show size of each file in blocks
+
+Changing file attributes
+ln: create a link
+	- Hard links: point to physical data
+	- Soft links aka symbolic links (-s): point to a file
+
+touch: update access & modification time to current time 
+	- touch filename
+	- touch -t 201101311759.30 filename
+
+Soft Link
+
+r: readable
+w: writeable
+x: executable
+
+chmod u+r filename
+
+Finding 
+
+-type type of a file
+-perm permission of a file
+-name name of a file
+-user owner of file
+-maxdepth how many levels to search
+
+find / -name filename -user atibhav
+
+File name matching
+?: match any single character in a filename
+	eg. find / -name filen?me
+
+man
+Extensive documentation that comes preinstalled
+eg. 
+	man <command_name>
+	man section command_name
+	Hit q to get out of man page
+
+whatis <command_name>
+whereis <command_name>
+
+Special Permissions
+Sticky Bit: o+t 
+	Used for shared directories. Locks file within directory from being modified by people other than the owner of the files within it even if they have write permissions
+
+setuid, setgid (u+s, g+s)
+- set user ID upon execution
+- Run an executable with the permissions of the executable’s owner or group
+
+Regular Expression
+Notation to search for a pattern of text
+
+grep ‘.’ - Matches any character except NUL or possibly New line character
+grep ‘e*’ - Matches 
+
+
+LAB 4
+
+Do the Git Tutorial before starting the assignment
+Set up X11 forwarding on using tutorial on Josh’s website
+
+Check Out - Download a working copy of the software to work on it
+Check In - Commit (write the change)
+
+Blobs - Sequence of bytes
+Trees - Groups of Blobs/trees
+
+Commit - Refers to a particular "git commit", contains all information about the commit
+
+CLI 
+git checkout ... - to checkout a project
+git add ... - get the files ready to be comitted (can still be modified at this stage)
+git commit ... - Commit the files to the VCS Server
+
+Head 
+
+

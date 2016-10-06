@@ -1,0 +1,44 @@
+sort --version
+To check the version of sort function
+
+sort (GNU coreutils) 8.24
+
+To generate a file containing 10 million double precision floats, I used the following command:
+
+od -An -t fD -N 80000000 < /dev/urandom | tr -s [:blank:] '\n' | sed '/^$/d' > doubles.txt
+
+-An is to not print out the offsets in the output.
+-t fD is to print out double precision floating point numbers
+-N is to specify the number of bytes to extract. Size should be 80 million since we need 10 million numbers each of which occupies 8 bytes.
+
+tr command converts consecutive space to a new line
+sed command removes empty lines
+
+Time comparisons:
+
+1 thread: (no --parallel option used)
+
+time -p sort -g doubles.txt	> /dev/null
+real 33.72
+user 188.02
+sys  0.36
+
+2 threads:
+time -p sort -g --parallel=2 doubles.txt > /dev/null
+real 93.64
+user 179.12
+sys   0.23
+
+4 threads:
+time -p sort -g --parallel=4 doubles.txt > /dev/null
+real 52.75
+user 179.46
+sys  0.27
+
+8 threads: 
+time -p sort -g --parallel=8 doubles.txt > /dev/null
+real 33.46
+user 188.10
+sys  0.36
+
+

@@ -1,0 +1,46 @@
+Decompress file in current directory:
+$ tar –xzvf filename.tar.gz
+Option –x: --extract
+Option –z: --gzip
+Option –v: --verbose
+Option –f: --file 
+
+Make
+> Utility for managing large software projects
+> Compiles files and keeps them up-to-date
+> Efficient Compilation (only files that need to be recompiled)
+
+Makefile Example
+
+# Makefile - A Basic Example
+all : shop  #usually first
+shop : item.o shoppingList.o shop.o
+	g++ -g -Wall -o shop item.o shoppingList.o shop.o 
+item.o : item.cpp item.h 
+	g++ -g -Wall -c item.cpp
+shoppingList.o : shoppingList.cpp item.h shoppingList.h 
+	g++ -g -Wall -c shoppingList.cpp
+shop.o : shop.cpp item.h shoppingList.h 
+	g++ -g -Wall -c shop.cpp
+clean :
+	rm -f item.o shoppingList.o shop.o shop
+
+Build Process:
+configure
+	Script that checks details about the machine before installation
+		> Dependency between packages
+	Creates ‘Makefile’
+make
+	Requires ‘Makefile’ to run
+	Compiles all the program code and creates executables in current temporary directory
+
+make install
+	make utility searches for a label named install within the Makefile, and executes only that section of it
+	executables are copied into the final directories (system directories)
+
+./configure --prefix=(Absolute path)
+To configure it into a directory specified by absolute path
+
+patch -pnum
+num should be number of slashes to ignore when patching the file
+

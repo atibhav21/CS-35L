@@ -1,0 +1,106 @@
+sort /usr/share/dict/words >./words
+I used this command to sort the given file and store the result into another 
+file words instead of outputting it to standard output.
+
+tr -c 'A-Za-z' '[\n*]'
+This command changes everything which does not belong to the set A-Z and a-z,
+ which is essentially all non alphabetical characters into the newline 
+ character
+
+tr -cs 'A-Za-z' '[\n*]'
+This command in addition to the following command treats multiple same 
+characters as single characters. Hence if continuous non-alphabetical 
+characters exist in the file, then instead of replacing each of them with
+ a new line, it only replaces 1 of them with a new line and deletes the rest.
+ When I feed the webpage to this command, the difference is that there are
+ no blank lines which happened in the previous command. 
+
+tr -cs 'A-Za-z' '[\n*]' | sort
+This command in addition to only replacing a single non-alphabetical 
+character with a new line, sorts them further alphabetically. The | 
+pipelines the output of the first command into the sort command which then 
+sorts the entire output. 
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u
+This command only outputs the unique terms from the sort command. For instance
+instead of outputting 10 different "z" it just output a single "z". The -u 
+option only outputs unique words from the sort command.
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+This command in addition to a unique sort with only A-Z characters, compares 
+the output to the file words and outputs all the lines which only appear in 
+one of the two files.
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words
+The -23 option which is new to this command as compared to the last command, 
+hides lines which are either only unique to the second file or the lines 
+which appear in both files.
+
+1. I used the command "wget http://mauimapp.com/moolelo/hwnwdseng.htm" to get 
+	the webpage. 
+2. I changed the name to hawaiian.htm using "mv hwnwdseng.htm hawaiian.htm"
+3. There are no bugs in this script
+4. My algorithm was to first get the file as alternating English words and
+	hawaiian words. To do this I used sed to delete all the HTML tags and the 
+	empty td tags. Then I deleted alternate lines since only alternate lines 
+	have English words.Then I changed all the ` to ' and finally changed a , 
+	to a newline character since they are multiple words according to the spec
+
+BuildWords Script:
+
+#! /bin/bash
+
+sed -e 's/ .<td><br>\n.*<\/td>//g'|
+sed -e 's/<td><\/td>//g' |
+grep '<td>.*</td>' | 
+sed 's/<[^>]*>//g' | 
+tr -d '[:blank:]' |
+tr -d '\r' |
+tr '`' "'"|
+sed '1d; n; d' |
+tr ',' '\n' | #change commas to newline character since its a new word 
+tr [:upper:] [:lower:] |
+sort -u |
+tr -cd "['pkmnwlhaeiou\n]"
+
+Checking the hwords dictionary
+Spell Checker on webpage
+Shell Command:
+tr -c 'A-Za-z' '[\n*]' <assign2.html | tr [:upper:] [:lower:] | sort -u 
+| comm -23 - hwords
+Words like: address, afterwords, abovementioned
+tr -c 'A-Za-z' '[\n*]' <assign2.html | tr [:upper:] [:lower:] | sort -u 
+| comm -23 - hwords | wc -l
+Output (Word Count): 409
+
+Spell Checker on hwords 
+Shell Command: 
+tr -c "A-Za-z'" '[\n*]' <hwords | sort -u | comm -23 - hwords | wc -l
+Output: 0
+This is true since every words in hords has to be in hwords.
+
+Misspelled English Words:
+tr -cs "A-Za-z" '[\n*]' <eng.txt | sort -u >words (To sort the words file)
+tr -cs "A-Za-z" '[\n*]' <assign2.html | tr [:upper:] [:lower:] | sort -u | 
+comm -23 - words | wc -l
+Output: 32
+Includes words like: html moolele ndash
+
+Misspelled Hawaiian Words:
+tr -cs "A-Za-z'" '[\n*]' <assign2.html | tr [:upper:] [:lower:] | sort -u | 
+comm -23 - hwords | wc -l
+Output: 418
+Includes words like: above, all, also
+
+Words Misspelled As English but not hawaiian:
+comm -23 misspelledEng.txt misspelledHaw.txt | wc -l
+Output: 3
+words: halau, htm, wiki
+
+Words Misspelled As Hawaiian but not English:
+comm -23 misspelledHaw.txt misspelledEng.txt | wc -l
+Output: 389
+words: x, y, words, lexicographically
+
+
+

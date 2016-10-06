@@ -1,0 +1,26 @@
+2.71
+a. The thing wrong with the code is that it is extracting the byte correctly but is not sign-extending this byte. It will work for positive numbers but not for negative numbers.
+
+b.
+int xbyte(packed_t word, int bytenum)
+{
+    return (((word >> (bytenum << 3)) & 0xFF) ^ (1U << 7) ) - (1U << 7);
+    // if the first bit is 0 then ^ with (1U<<7) would give a 1 at the 8th bit and subtraction would give a 0 back in its original expression. If it is a 1 however, then ^ would give a 0 at that position and subtraction would cause a all previous bits to be converted into 1s, successfully converting it into a signed integer.
+}
+
+2.82
+
+1. x<y == -x>-y
+	This is will not always give a value of 1. In the case that x = Tmin, -x would also equal Tmin due to an overflow and hence for any other value of y, this is not true.
+
+2. 	((x+y) << 4) + y - x == 17y + 15x
+	This will always give a value of 1. When X+Y is bit-shifted left by 4, its being multiplied by 16. Hence 16x + 16y -x+y is always 17y + 15x
+
+3. ~x + ~y + 1 == ~ (x + y)
+	This will always give a value of 1. Because of the addition of 1 to the ~x + ~y, the carry bit problem which might arise on the right hand side due to addition of 1 and 1 of the most significant bit is taken care of.
+
+4. (ux - uy) == - (unsigned) (y-x)
+	This will always give a value of 1 because the bit level representation of ux - uy is the same as the bit level representation of -(unsigned) (y-x). 
+
+5. ((x>>2) << 2) <= x
+	This will always give 1. This expression is basically replacing the final two bits of the number with 00 and hence this will always be less than or equal to x.

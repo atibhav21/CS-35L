@@ -1,0 +1,57 @@
+#!/bin/bash
+dir=$1
+RESULT=`ls -a $dir`
+let COUNT=0
+IFS_backup=$IFS
+IFS=$(echo -en "\n\b")
+for File1 in $RESULT
+do
+   for File2 in $RESULT
+   do
+       if [ -f "$dir/$File1" ] && [ -f "$dir/$File2" ] 
+       then
+           if [ "$File1" != "$File2" ]
+	   then
+      	       if cmp -s "$dir/$File1" "$dir/$File2" 
+	       then
+		   let COUNT=COUNT+1;
+		   if [ "$(echo $File1 | head -c 1) "  == '.' ] || 
+		   		[ "$(echo $File2 | head -c 1) " == '.' ]
+		   then
+		       if [ "$(echo $File1 | head -c 1) "  == '.' ] &&
+		       	 [ "$(echo $File2 | head -c 1) " != '.' ]
+		       then
+			   rm "$dir/$File2"
+			   ln "$dir/$File1" "$dir/$File2"
+  		       elif [ "$(echo $File1 | head -c 1) "  == '.' ] && 
+  		       		[ "$(echo $File2 | head -c 1) " == '.' ]
+		       then	 
+			   if [ "$File1" > "$File2" ] 
+			   then
+			       rm "$dir/$File1"
+			       ln "$dir/$File2" "$dir/$File1"
+			   else
+			       rm "$dir/$File2"
+			       ln "$dir/$File1" "$dir/$File2"
+		           fi
+		       else 
+			   rm "$dir/$File1"
+			   ln "$dir/$File2" "$dir/$File1"
+		       fi
+		   else
+		       if [ "$File1" > "$File2" ] 
+		       #CHECK PREVIOUS COMMAND
+		       then
+			   rm "$dir/$File1"
+			   ln "$dir/$File2" "$dir/$File1"
+		       else
+			   rm "$dir/$File2"
+			   ln "$dir/$File1" "$dir/$File2"
+		       fi
+		  fi
+	       fi
+	   fi
+       fi
+   done
+done
+IFS=$IFSBU

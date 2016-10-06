@@ -1,0 +1,28 @@
+sfrobu
+
+Use system calls instead of getchar() and putchar()
+
+Allocate enough memory part:
+
+fstat()
+returns information about file
+
+check regular file
+IS_REG
+st_size member of fstat
+
+if ISREG:
+	allocate buffer size base on file size
+else
+	allocate current size of file and resize as necessary
+
+
+sfrobs
+
+bash script
+
+
+tr... | sort | tr...
+
+use octal arguments for tr
+use double quotes

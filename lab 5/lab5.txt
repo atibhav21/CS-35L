@@ -1,0 +1,120 @@
+Laboratory: 
+
+1. Extract a copy of the buggy version of coreutils using:
+wget http://web.cs.ucla.edu/classes/spring16/cs35L/assign/coreutils-with-bug.tar.gz
+
+2. Decompress the .tar file using the command 
+tar -xvzf coreutils-with-bug.tar.gz
+
+3. mkdir coreutilsInstall
+./configure --prefix=/u/cs/ugrad/atibhav/lab5/coreutilsInstall/
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:374:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, __const struct timespec __times[2]) __THROW;
+            ^
+Makefile:659: recipe for target 'utimecmp.o' failed
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory '/w/home.08/cs/ugrad/atibhav/lab5/coreutils-with-bug/lib'
+Makefile:414: recipe for target 'all' failed
+make[2]: *** [all] Error 2
+make[2]: Leaving directory '/w/home.08/cs/ugrad/atibhav/lab5/coreutils-with-bug/lib'
+Makefile:419: recipe for target 'all-recursive' failed
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory '/w/home.08/cs/ugrad/atibhav/lab5/coreutils-with-bug'
+Makefile:357: recipe for target 'all' failed
+make: *** [all] Error 2
+
+It failed because the name "futimens" in utimecmp.c is used to name multiple items. Hence, the compiler is unable to compile this code due to ambiguity.
+
+To get the renaming patch, I used the command:
+wget http://web.cs.ucla.edu/classes/spring16/cs35L/assign/coreutils.diff
+
+I used the command -p0 to apply the patch
+
+I then reproduced the bug using the following commands
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+
+I now ran the command:
+TZ=UTC0 ~/lab5/coreutils-with-bug/src/ls -lt --full-time wwi-armistice now now1
+
+This produced the following output (which illustrates the bug):
+-rw-r--r-- 1 atibhav csugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 atibhav csugrad 0 2016-04-29 08:20:36.949807728 +0000 now1
+-rw-r--r-- 1 atibhav csugrad 0 2016-04-29 08:20:30.578566826 +0000 now
+
+The wwi-armistice file which was modified in 1918 is now shown at the top even though its the oldest file.
+
+The bug probably lies in a signed operation being converted into an unsigned data type (which would lead to a large positive value and hence would explain why wwwi-armstice is at the top)
+
+After looking at the ls.c file, I saw that the function calls sort_files, which is possibly where the bug lies
+I then ran ls -l using
+gdb ~/lab5/coreutils-with-bug/src/ls 
+b sort_files
+run -lt
+
+Using the s command after the breakpoint was called, I found out that the function calls compare_mtime
+I ran the program again with gdb and set the breakpoint at compare_mtime this time
+Then by s again and again, I ended up in timespec_cmp which finds out a difference in files
+
+I now went to examine the source code of the file timespec_cmp which was in timespec.h
+I saw that the file compares two time_t type variables. The tmp directory on SEASNet servers probably defines 32 bit unsigned ints as its values, which is the source of the bug. 
+A possible solution to this bug is to typecast the 2 operands to signed long int.
+Signed to deal with the unsigned problem and long to take care of overflows.
+
+static inline int
+timespec_cmp (struct timespec a, struct timespec b)
+{
+	signed long int diff = (signed long int)a.tv_sec - (signed long int) b.tv_sec;
+  if(diff > 0)
+    {
+      return 1;
+    }
+  else if (diff == 0)
+    {
+      return 0;
+    }
+  else
+    {
+      return -1;
+    }
+}
+
+I then went back to my coreutils-with-bug directory and typed make to compile the code.
+Then in the other window, that I had the temp folder in, I ran the new ls command again
+TZ=UTC0 ~/lab5/coreutils-with-bug/src/ls -lt --full-time
+
+This produced the correct output:
+total 0
+-rw-r--r-- 1 atibhav csugrad 0 2016-05-01 22:59:36.508251777 +0000 now1
+-rw-r--r-- 1 atibhav csugrad 0 2016-05-01 22:59:26.113874534 +0000 now
+-rw-r--r-- 1 atibhav csugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+
+I then generated the ChangeLog File by going back to coreutils-with-bug directory and then typing
+C-x 4 a
+I then saved that file and then generated a patch file using the command:
+diff -u ../coreutils-with-bug/lib/timespec.h lib/timespec.h > patch_file
+I then used the command 
+cat ChangeLog patch_file > lab5.diff
+
+To test SEASNET, I first made a directory
+mkdir lab5test
+cd lab5test
+touch -d "1918-11-11 11:00 GMT" wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 ls -lt --full-time
+
+This produces the wwi-armistice file in the year 2054. SEASNet does not do very well in this test. The time for the file is probably not stored correctly
+

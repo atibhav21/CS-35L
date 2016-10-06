@@ -1,0 +1,326 @@
+comm utility - -1 (unique to file 1) -2 (unique to file 2) -3 (common in both files)
+
+Bash Scripts
+
+buildwords
+
+#!/bin/bash
+
+#extract only the words
+grep "<td>" |
+#delete html tags
+sed 's/<[^>]*>//g' |
+tr -s "[:blank:]" |
+#delete beginning spacing
+sed 's/^[:blank:]//g' |
+#to lower
+tr '[:upper:]' '[:lower:]' |
+#delete whats inside parenthesis
+sed 's/([^)]*)//g' |
+#treat ` as '
+sed 's/`/'"'"'/g' |
+#eliminate carriage return
+sed 's/\r/\n/g' |
+tr [:blank:] '\n' |
+tr , '\n' |
+#squeeze multiple spaces into one
+tr -s "\n"  |
+#reject words with no hawaian chars
+sed '/[^p^k^m^n^w^l^h^a^e^i^o^u^'\'']/d' |
+sort -u
+
+# end of bash script
+
+sameln
+
+#!/bin/bash
+
+dir=$1
+
+RESULT=`ls $dir | sort`
+HIDDEN=`ls -a $dir | grep '^\.' | sort`
+let count=0
+declare -a FDARR
+
+restore="$IFS"
+IFS=$'\n'
+
+for HFILE in $HIDDEN
+do
+    if [ -L "$dir/$HFILE" ]
+    then
+	:
+    elif [ ! -f "$dir/$HFILE" ]
+    then
+	:
+    elif [ ! -r "$dir/$HFILE" ]
+    then
+	echo "$HFILE is not readable"
+    else
+	FDARR[$count]="$dir/$HFILE"
+	let count=count+1
+    fi
+done
+
+for FILE in $RESULT
+do
+    if [ -L "$dir/$FILE" ]
+    then
+        :
+    elif [ ! -f "$dir/$FILE" ]
+    then
+        :
+    elif [ ! -r "$dir/$FILE" ]
+    then
+        echo "$FILE is not readable"
+    else
+        FDARR[$count]="$dir/$FILE"
+        let count=count+1
+    fi
+done
+
+for (( i=0; i<$count; i++ ))
+do
+    for (( j=i+1; j<$count; j++ ))
+    do
+        cmp -s "${FDARR[$i]}" "${FDARR[$j]}"
+        if [ $? -eq 0 ]
+        then
+            ln -fP "${FDARR[$i]}" "${FDARR[$j]}"
+	    FDARR[$j]=FDARR[$i]
+        fi
+    done
+done
+
+IFS=$restore
+
+TR COMMAND
+
+Translate, squeeze, and/or delete characters from standard input, writing to standard output.
+
+-c, -C, --complement
+use the complement of SET1
+-d, --delete
+delete characters in SET1, do not translate
+-s, --squeeze-repeats
+replace each input sequence of a repeated character that is listed in SET1 with a single occurrence of that character
+-t, --truncate-set1
+first truncate SET1 to length of SET2
+--help
+display this help and exit
+--version
+output version information and exit
+SETs are specified as strings of characters. Most represent themselves. Interpreted sequences are:
+
+\NNN
+character with octal value NNN (1 to 3 octal digits)
+\\
+backslash
+\a
+audible BEL
+\b
+backspace
+\f
+form feed
+\n
+new line
+\r
+return
+\t
+horizontal tab
+\v
+vertical tab
+CHAR1-CHAR2
+all characters from CHAR1 to CHAR2 in ascending order
+[CHAR*]
+in SET2, copies of CHAR until length of SET1
+[CHAR*REPEAT]
+REPEAT copies of CHAR, REPEAT octal if starting with 0
+[:alnum:]
+all letters and digits
+[:alpha:]
+all letters
+[:blank:]
+all horizontal whitespace
+[:cntrl:]
+all control characters
+[:digit:]
+all digits
+[:graph:]
+all printable characters, not including space
+[:lower:]
+all lower case letters
+[:print:]
+all printable characters, including space
+[:punct:]
+all punctuation characters
+[:space:]
+all horizontal or vertical whitespace
+[:upper:]
+all upper case letters
+[:xdigit:]
+all hexadecimal digits
+[=CHAR=]
+all characters which are equivalent to CHAR
+
+Makefiles
+# Makefile - A Basic Example
+all : shop  #usually first
+shop : item.o shoppingList.o shop.o
+	g++ -g -Wall -o shop item.o shoppingList.o shop.o 
+item.o : item.cpp item.h 
+	g++ -g -Wall -c item.cpp
+shoppingList.o : shoppingList.cpp item.h shoppingList.h 
+	g++ -g -Wall -c shoppingList.cpp
+shop.o : shop.cpp item.h shoppingList.h 
+	g++ -g -Wall -c shop.cpp
+clean :
+	rm -f item.o shoppingList.o shop.o shop
+
+Function Pointers:
+double (*func_ptr) (double, double);
+func_ptr = pow; // func_ptr points to pow() function
+To call pow,
+func_ptr(arg1, arg2);
+
+SSH and Communication over the internet:
+Communication over the internet requires:
+	Confidentiality
+	Data Integrity
+	Authentication
+		Identity confirmation
+	Authorization
+		Specifying access rights
+
+Symmetric Key Encryption:
+Key used to encrypt is used to decrypt
+
+Asymmetric Key Encryption:
+2 different keys
+2 different (but related) keys: public and private 
+Only creator knows the relation. Private key cannot be derived from public key
+Data encrypted with public key can only be decrypted by private key and vice versa
+Public key can be seen by anyone
+
+Asymmetric Encryption:
+Anything encrypted using a public key can only be decrypted using the private key. 
+So sender gets access to users public key, encrypts it using that key. User gets encrypted file and decrypts it using his/her own private key
+
+Digital Signatures:
+Message Digest: Encrypted message using hashing algorithms and the senders private key
+Message Digest is created using senders private key, so if the message was intercepted and re-encrypted, the users public key won't be able to decrypt message, which proves that file was tampered with.
+
+This does not prove origin since someone can intercept the message, 
+
+System Calls:
+Used by user-level processes to request a service from the kernel
+Changes the CPU’s mode from user mode to kernel mode to enable more capabilities
+Is part of the kernel of the OS
+Verifies that the user should be allowed to do the requested action and then does the action (kernel performs the operation on behalf of the user)
+Is the only way a user program can perform privileged operations
+
+
+#include <unistd.h>
+ssize_t read(int filedes, void* buffer, size_t nbytes)
+ssize_t write(int filedes, const void* buffer, size_t nbytes)
+
+filedes: file descriptor(0 for stdin, 1 for stdout, 2 for stderr)
+If want to use a fildes for a file, use:
+int open(const char* path, int flags, mode_t mode) 
+returns filedes
+void close(int filedes);
+
+pid_t getpid(void)
+	Returns the process ID of the calling process
+int dup(int fd)
+	Duplicates a file descriptor fd. Returns a second file descriptor that points to the same file table entry as fd  does.
+int fstat(int filedes, struct stat *buf)
+	Returns information about the file with the descriptor filedes into buf
+
+Unbuffered I/O - writes/reads every single byte using system calls through the kernel
+Buffered I/O - writes/reads a buffer of bytes
+
+Multithreading
+
+Multiprocessing: Using multiple cores to perform tasks to improve performance
+
+Different forms of parallelism:
+Multitasking: Several processes are scheduled alternately or possibly simultaneously on a multiprocessing system
+
+Multithreading: Same job is broken logically into pieces (threads) which may be executed simultaneously on a multiprocessing system
+
+Multithreading
+	Threads share the same address space
+		Light-weight creation/destruction
+		Easy inter-thread communication
+		An error in one thread can bring down all threads in process 
+
+Multitasking
+	Processes are insulated from each other
+		Expensive creation/destruction
+		Expensive IPC
+		An error in one process cannot bring down another process
+
+#include <pthread.h>
+
+Possible Functions:
+	1. pthread_create: creates a new thread within a process
+ 	2. pthread_join: waits for another thread to terminate
+ 	3. pthread_equal: compares thread ids to see if they refer to the same thread
+ 	4. pthread_self: returns the id of the calling thread
+ 	5. pthread_exit: terminates the currently running thread 
+
+TO CREATE A THREAD:
+
+int pthread_create( pthread_t *tid, const pthread_attr_t *attr, void *(my_function)(void *), void *arg ); 
+	tid: unique identifier for newly created thread
+	attr: object that holds thread attributes (priority, stack size, etc.)
+	Pass in NULL for default attributes
+	my_function: function that thread will execute once it is created
+	arg: a single argument that may be passed to my_function
+	Pass in NULL if no arguments 
+
+TO JOIN A THREAD: 
+
+int pthread_join(pthread_t tid, void **status);
+	tid: thread ID of thread to wait on
+	status: the exit status of the target thread is stored in the location pointed to by *status
+			Pass in NULL if no status is needed
+
+SAMPLE CODE:
+	
+
+	#include <pthread.h>
+ 	pthread_t threads[NUM_THREADS]; 
+         int ret, t; 
+         for(t = 0; t < NUM_THREADS; t++) { 
+                  printf("Creating thread %d\n", t); 
+                  ret = pthread_create(&threads[t], NULL, PrintHello, (void *) t); 
+                  // check return value }
+
+          for(t = 0; t < NUM_THREADS; t++) {
+                  ret =  pthread_join(threads[t], NULL);
+                  // check return value }
+
+#include <dlfcn.h>
+
+void *dlopen(const char *filename, RTLD_LAZY);
+void *dlsym(void *restrict handle, const char *restrict name);
+int dlclose(void *handle);
+char *dlerror(void);
+
+Advantages of Dynamic Linking:
+	The executable is typically smaller 
+	When the library is changed, the code that references it does not usually need to be recompiled
+	The executable accesses the .so at run time; therefore, multiple programs can access the same .so at the same time
+
+Disadvantages of Dynamic Linking:
+	Performance hit
+		Need to load shared objects (at least once)
+		Need to resolve addresses (once or every time)
+		Remember back to the system call assignment… 
+	What if the necessary dynamic library is missing? 
+	What if we have the library, but it is the wrong version?
+
+
+

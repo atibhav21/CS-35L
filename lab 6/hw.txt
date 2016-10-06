@@ -1,0 +1,26 @@
+1. 
+
+If the other teams are observing the bytes flowing across the network, 
+they will not be able to decode the message. Once the network is setup, 
+decrypting the bytes flowing across is very hard. Hence, the network will 
+still be secure
+
+a. 
+The network will still be secure. Even after tapping the keyboard, the 
+other teams will have no way of being able to find out the key. If the system
+were password based, then the system wouldn't be secure but since the key
+generated is not typed on they keyboard, there is no way for the other teams
+to tap the network.
+
+b. 
+If the other team had access to my boot USB, they could access my filesystem
+if the boot CD stores files. However, once I disconnect, all the files would 
+be reset and all data would be lost.
+
+2. 
+gpg--verify won't confirm the creator of the file because it is possible for 
+someone to have intercepted the initial connection and modified the encryption
+such that it showed them as the sender. The way to get around this is to have 
+a 3rd party verification system that contains the users public key and their 
+name, email address and other such potential information that could verify 
+the actual creator of the encrypted file

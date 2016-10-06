@@ -1,0 +1,49 @@
+Installation steps
+sudo apt-get install openssh-server
+sudo apt-get install openssh-client
+sudo apt-get install emacs
+I ran these commands to set up the lab. 
+
+Server-Steps
+
+ssh-keygen
+To generate a key for the user
+
+sudo useradd -d /home/devin -m devin
+Create an accound for the user
+
+sudo passwd devin
+I ran this command to make a password for the user, even though the 
+client never uses the password
+
+cd /home/devin
+sudo mkdir .ssh
+mkdir test
+We made this test directory to check if actual connection was established
+
+sudo chown -R devin .ssh
+sudo chmod 700 .ssh
+Modify user permissions
+
+
+emacs /etc/ssh/sshd_config
+Set the password authentication option to no
+
+Client Steps
+
+ssh-keygen
+ssh-copy-id -i atibhav@10.97.85.180
+ssh-add
+I ran these two commands to generate a key and copy it to the server.
+
+ssh atibhav@10.97.85.180
+
+Automatically logged in.
+Ran an ls command to check if test folder is actually present
+
+It showed the test directory.
+Hence, actual connection was established
+
+ssh -X atibhav@10.97.85.180
+firefox
+This opened a GUI for the firefox web browser. 

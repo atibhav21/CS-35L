@@ -1,0 +1,14 @@
+10. Starting from Top Left and proceeding in the left to right order
+
+Top left window: This window displays the entire tree structure of the 
+project. It shows the branches, merges and all other such data.
+
+Top Middle window: This displays a list of the authors who have made 
+	commits.
+
+Top Right Window: Displays the dates on which the commits were made.
+
+Bottom Left Window: Displays the Log details for the commit that we are 
+looking at.
+
+Bottom Right Window: Contains a list of the modified files in the commit

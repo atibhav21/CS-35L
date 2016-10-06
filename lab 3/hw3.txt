@@ -1,0 +1,21 @@
+Q1
+The patch removed the line "case_long_iso_time_style:" because the default 
+had to be changed from the ISO format to the POSIX format. It was necessary 
+to remove that line because the default should not be ISO in case a 
+translation is available.
+
+Q2
+It could be a possible source of bugs in parsing output from the ls command. 
+This would introduce problems in non-English speaking countries because the 
+date format would be different and would not be understandable to the people.
+
+Q3
+Running the randline.py script with an empty file like /dev/null produces a 
+"list index out of range" exception since the script tries to access a random
+ line number in an empty file, which throws an IndexError exception. However, 
+ the script does not have a catch block for this kind of exception.
+
+Q4
+When I run the command with python3 instead of just python, I get a 
+SyntaxError:invalid syntax on the line "except IOError as (errno, strerror):""
+because the format in python3 is "except IOError as err:" 
